@@ -1,0 +1,229 @@
+import bcrypt from 'bcryptjs';
+import type { Admin, Category, ProductAttribute, Order, Review, Banner } from '@/types/admin';
+
+// Mock Admin Data (password: admin123)
+export const mockAdmins: Admin[] = [
+  {
+    _id: '1',
+    username: 'admin',
+    email: 'admin@example.com',
+    password: bcrypt.hashSync('admin123', 10),
+    role: 'super_admin',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
+
+// Mock Categories
+export const mockCategories: Category[] = [
+  {
+    _id: '1',
+    name: 'Điện thoại',
+    slug: 'dien-thoai',
+    description: 'Điện thoại thông minh các loại',
+    order: 1,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    _id: '2',
+    name: 'Laptop',
+    slug: 'laptop',
+    description: 'Laptop, máy tính xách tay',
+    order: 2,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    _id: '3',
+    name: 'Tablet',
+    slug: 'tablet',
+    description: 'Máy tính bảng',
+    order: 3,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
+
+// Mock Product Attributes
+export const mockAttributes: ProductAttribute[] = [
+  {
+    _id: '1',
+    name: 'Màu sắc',
+    slug: 'mau-sac',
+    type: 'color',
+    values: [
+      { value: '#000000', label: 'Đen' },
+      { value: '#FFFFFF', label: 'Trắng' },
+      { value: '#FF0000', label: 'Đỏ' },
+      { value: '#0000FF', label: 'Xanh' },
+    ],
+    isRequired: true,
+    order: 1,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    _id: '2',
+    name: 'Dung lượng',
+    slug: 'dung-luong',
+    type: 'select',
+    values: [
+      { value: '64gb', label: '64GB' },
+      { value: '128gb', label: '128GB' },
+      { value: '256gb', label: '256GB' },
+      { value: '512gb', label: '512GB' },
+    ],
+    isRequired: true,
+    order: 2,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
+
+// Mock Orders
+export const mockOrders: Order[] = [
+  {
+    _id: '1',
+    orderNumber: 'ORD-2024-001',
+    customerInfo: {
+      name: 'Nguyễn Văn A',
+      email: 'nguyenvana@example.com',
+      phone: '0901234567',
+    },
+    items: [
+      {
+        productId: '1',
+        productName: 'iPhone 15 Pro Max',
+        productImage: '/products/iphone-15-pro-max.jpg',
+        quantity: 1,
+        price: 29990000,
+        attributes: {
+          color: 'Titan Tự Nhiên',
+          storage: '256GB',
+        },
+      },
+    ],
+    subtotal: 29990000,
+    shippingFee: 0,
+    discount: 0,
+    total: 29990000,
+    status: 'pending',
+    paymentMethod: 'cod',
+    paymentStatus: 'pending',
+    shippingAddress: {
+      fullName: 'Nguyễn Văn A',
+      phone: '0901234567',
+      email: 'nguyenvana@example.com',
+      address: '123 Đường ABC',
+      city: 'Hồ Chí Minh',
+      district: 'Quận 1',
+      ward: 'Phường Bến Nghé',
+    },
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+    updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+  },
+  {
+    _id: '2',
+    orderNumber: 'ORD-2024-002',
+    customerInfo: {
+      name: 'Trần Thị B',
+      email: 'tranthib@example.com',
+      phone: '0907654321',
+    },
+    items: [
+      {
+        productId: '2',
+        productName: 'MacBook Pro 14',
+        productImage: '/products/macbook-pro-14.jpg',
+        quantity: 1,
+        price: 52990000,
+      },
+    ],
+    subtotal: 52990000,
+    shippingFee: 0,
+    discount: 1000000,
+    total: 51990000,
+    status: 'confirmed',
+    paymentMethod: 'bank_transfer',
+    paymentStatus: 'paid',
+    shippingAddress: {
+      fullName: 'Trần Thị B',
+      phone: '0907654321',
+      email: 'tranthib@example.com',
+      address: '456 Đường XYZ',
+      city: 'Hà Nội',
+      district: 'Quận Hai Bà Trưng',
+      ward: 'Phường Bạch Đằng',
+    },
+    notes: 'Giao giờ hành chính',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+    updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
+  },
+];
+
+// Mock Reviews
+export const mockReviews: Review[] = [
+  {
+    _id: '1',
+    productId: '1',
+    productName: 'iPhone 15 Pro Max',
+    customerName: 'Nguyễn Văn C',
+    customerEmail: 'nguyenvanc@example.com',
+    rating: 5,
+    title: 'Sản phẩm tuyệt vời!',
+    comment: 'Máy đẹp, chạy mượt, pin trâu. Rất hài lòng với sản phẩm.',
+    isVerifiedPurchase: true,
+    status: 'approved',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
+    updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 36).toISOString(),
+  },
+  {
+    _id: '2',
+    productId: '1',
+    productName: 'iPhone 15 Pro Max',
+    customerName: 'Lê Thị D',
+    customerEmail: 'lethid@example.com',
+    rating: 4,
+    comment: 'Sản phẩm tốt nhưng giá hơi cao.',
+    isVerifiedPurchase: false,
+    status: 'pending',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
+    updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
+  },
+];
+
+// Mock Banners
+export const mockBanners: Banner[] = [
+  {
+    _id: '1',
+    title: 'iPhone 15 Series - Giảm giá đặc biệt',
+    description: 'Giảm đến 5 triệu + Trả góp 0%',
+    image: '/banners/iphone-15-banner.jpg',
+    imageAlt: 'iPhone 15 Banner',
+    linkUrl: '/products?category=dien-thoai',
+    linkText: 'Mua ngay',
+    position: 'home_hero',
+    order: 1,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    _id: '2',
+    title: 'MacBook Black Friday',
+    description: 'Giảm giá sốc đến 30%',
+    image: '/banners/macbook-banner.jpg',
+    imageAlt: 'MacBook Banner',
+    linkUrl: '/products?category=laptop',
+    linkText: 'Xem thêm',
+    position: 'home_middle',
+    order: 2,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];

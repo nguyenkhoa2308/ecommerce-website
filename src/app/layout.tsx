@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Quicksand } from "next/font/google";
 import "./globals.css";
-import Footer from "@/components/layout/Footer";
-import Header from "@/components/layout/Header";
 import ToasterProvider from "@/components/providers/ToasterProvider";
 import HydrationProvider from "@/components/providers/HydrationProvider";
+import ConditionalLayout from "@/components/layout/ConditionalLayout";
 
 const quicksand = Quicksand({
   variable: "--font-quicksand",
@@ -26,9 +25,7 @@ export default function RootLayout({
       <body className={`${quicksand.variable} antialiased`}>
         <ToasterProvider />
         <HydrationProvider>
-          <Header />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
+          <ConditionalLayout>{children}</ConditionalLayout>
         </HydrationProvider>
       </body>
     </html>
