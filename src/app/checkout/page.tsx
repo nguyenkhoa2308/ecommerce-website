@@ -1,6 +1,6 @@
 "use client";
 
-import { useCartStore } from "@/store/cartStore";
+import { useCartStore } from "@/stores/cartStore";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, MapPin, User, Phone, Mail, Home } from "lucide-react";
@@ -27,7 +27,9 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));

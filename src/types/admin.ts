@@ -92,12 +92,14 @@ export interface Review {
   customerId?: string;
   customerName: string;
   customerEmail: string;
+  customerPhone?: string;
   rating: number; // 1-5
   title?: string;
   comment: string;
   images?: string[];
   isVerifiedPurchase: boolean;
   status: 'pending' | 'approved' | 'rejected';
+  rejectReason?: string;
   adminReply?: string;
   createdAt: string;
   updatedAt: string;

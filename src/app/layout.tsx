@@ -4,6 +4,7 @@ import "./globals.css";
 import ToasterProvider from "@/components/providers/ToasterProvider";
 import HydrationProvider from "@/components/providers/HydrationProvider";
 import ConditionalLayout from "@/components/layout/ConditionalLayout";
+import { AuthInitializer } from "@/components/AuthInitializer";
 
 const quicksand = Quicksand({
   variable: "--font-quicksand",
@@ -23,6 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${quicksand.variable} antialiased`}>
+        <AuthInitializer />
         <ToasterProvider />
         <HydrationProvider>
           <ConditionalLayout>{children}</ConditionalLayout>

@@ -2,7 +2,7 @@
 
 import { Phone, Search, ShoppingBag } from "lucide-react";
 import Link from "next/link";
-import { useCartStore } from "@/store/cartStore";
+import { useCartStore } from "@/stores/cartStore";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -33,7 +33,10 @@ export default function Header() {
           <h1 className="text-xl font-bold text-white">My E-commerce Store</h1>
         </Link>
 
-        <form onSubmit={handleSearch} className="relative flex-1 mx-auto max-w-lg">
+        <form
+          onSubmit={handleSearch}
+          className="relative flex-1 mx-auto max-w-lg"
+        >
           <input
             type="text"
             value={searchInput}

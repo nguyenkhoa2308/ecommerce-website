@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { LogIn } from "lucide-react";
 import toast from "react-hot-toast";
+import { useAuthStore } from "@/stores/authStore";
 
 export default function AdminLoginPage() {
-  const router = useRouter();
+  const login = useAuthStore((state) => state.login);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
@@ -19,18 +18,13 @@ export default function AdminLoginPage() {
     setIsLoading(true);
 
     try {
-      const result = await signIn("credentials", {
-        username: formData.username,
-        password: formData.password,
-        redirect: false,
-      });
+      const success = await login(formData.username, formData.password);
 
-      if (result?.error) {
-        toast.error("Tên đăng nhập hoặc mật khẩu không đúng");
-      } else {
+      if (success) {
         toast.success("Đăng nhập thành công!");
-        router.push("/admin");
-        router.refresh();
+        window.location.href = "/admin";
+      } else {
+        toast.error("Tên đăng nhập hoặc mật khẩu không đúng");
       }
     } catch (error) {
       toast.error("Có lỗi xảy ra, vui lòng thử lại");
@@ -57,13 +51,13 @@ export default function AdminLoginPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label
-                htmlFor="username"
+                htmlFor="text"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
                 Tên đăng nhập
               </label>
               <input
-                id="username"
+                id="text"
                 type="text"
                 value={formData.username}
                 onChange={(e) =>
@@ -109,7 +103,8 @@ export default function AdminLoginPage() {
           {/* Demo credentials */}
           <div className="mt-6 p-4 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-600 text-center">
-              <strong>Demo:</strong> Tên đăng nhập: <code>admin</code> | Mật khẩu: <code>admin123</code>
+              <strong>Demo:</strong> Email: <code>admin@example.com</code> | Mật
+              khẩu: <code>admin123</code>
             </p>
           </div>
         </div>

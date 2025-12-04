@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Edit, Trash2, Eye, EyeOff } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, EyeOff, X, Image as ImageIcon, Layout, MapPin, Link2, ToggleLeft, ToggleRight, ExternalLink } from "lucide-react";
 import { mockBanners } from "@/lib/admin.mock";
 import type { Banner } from "@/types/admin";
 import toast from "react-hot-toast";
+import CustomSelect from "@/components/ui/CustomSelect";
 
 export default function BannersPage() {
   const [banners, setBanners] = useState<Banner[]>(mockBanners);
@@ -31,6 +32,12 @@ export default function BannersPage() {
     order: 0,
     isActive: true,
   });
+
+  const stats = {
+    total: banners.length,
+    active: banners.filter(b => b.isActive).length,
+    inactive: banners.filter(b => !b.isActive).length,
+  };
 
   const handleOpenModal = (banner?: Banner) => {
     if (banner) {
@@ -75,11 +82,7 @@ export default function BannersPage() {
       setBanners(
         banners.map((banner) =>
           banner._id === editingBanner._id
-            ? {
-                ...banner,
-                ...formData,
-                updatedAt: new Date().toISOString(),
-              }
+            ? { ...banner, ...formData, updatedAt: new Date().toISOString() }
             : banner
         )
       );
@@ -114,124 +117,195 @@ export default function BannersPage() {
     toast.success("Cập nhật trạng thái thành công!");
   };
 
-  const getPositionLabel = (position: Banner["position"]) => {
-    const labels = {
-      home_hero: "Trang chủ - Hero",
-      home_middle: "Trang chủ - Giữa",
-      category_top: "Danh mục - Đầu trang",
-      product_sidebar: "Sản phẩm - Sidebar",
+  const getPositionConfig = (position: Banner["position"]) => {
+    const configs = {
+      home_hero: { label: "Trang chủ - Hero", bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200" },
+      home_middle: { label: "Trang chủ - Giữa", bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-200" },
+      category_top: { label: "Danh mục - Đầu", bg: "bg-green-50", text: "text-green-700", border: "border-green-200" },
+      product_sidebar: { label: "Sản phẩm - Sidebar", bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200" },
     };
-    return labels[position];
+    return configs[position];
   };
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-8">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Quản lý Banners</h1>
-          <p className="text-gray-600 mt-2">Quản lý banner quảng cáo</p>
+          <h1 className="text-2xl font-bold text-gray-900">Quản lý Banner</h1>
+          <p className="text-gray-500 mt-1">Quản lý banner quảng cáo trên website</p>
         </div>
         <button
           type="button"
           onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-sm"
         >
-          <Plus size={20} />
-          Thêm banner
+          <Plus size={18} />
+          <span>Thêm banner</span>
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {banners.map((banner) => (
-          <div
-            key={banner._id}
-            className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
-          >
-            <div className="aspect-video bg-gray-100 flex items-center justify-center">
-              <span className="text-gray-400">Banner Image Preview</span>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-blue-50 rounded-lg">
+              <Layout className="w-5 h-5 text-blue-600" />
             </div>
-            <div className="p-6">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">{banner.title}</h3>
-                  <p className="text-sm text-gray-600">{banner.description}</p>
-                </div>
-                <span
-                  className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                    banner.isActive
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                  }`}
-                >
-                  {banner.isActive ? "Hoạt động" : "Tắt"}
-                </span>
-              </div>
-
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="text-gray-600">Vị trí:</span>
-                  <span className="font-medium">{getPositionLabel(banner.position)}</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="text-gray-600">Thứ tự:</span>
-                  <span className="font-medium">{banner.order}</span>
-                </div>
-                {banner.linkUrl && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-gray-600">Link:</span>
-                    <a
-                      href={banner.linkUrl}
-                      className="text-blue-600 hover:underline truncate"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {banner.linkUrl}
-                    </a>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => toggleActive(banner._id)}
-                  className="flex items-center gap-2 px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
-                >
-                  {banner.isActive ? <EyeOff size={16} /> : <Eye size={16} />}
-                  {banner.isActive ? "Tắt" : "Bật"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleOpenModal(banner)}
-                  className="flex items-center gap-2 px-3 py-2 text-sm bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition"
-                >
-                  <Edit size={16} />
-                  Sửa
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(banner._id)}
-                  className="flex items-center gap-2 px-3 py-2 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition"
-                >
-                  <Trash2 size={16} />
-                  Xóa
-                </button>
-              </div>
+            <div>
+              <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+              <p className="text-sm text-gray-500">Tổng banner</p>
             </div>
           </div>
-        ))}
+        </div>
+        <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-green-50 rounded-lg">
+              <Eye className="w-5 h-5 text-green-600" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-gray-900">{stats.active}</p>
+              <p className="text-sm text-gray-500">Đang hiển thị</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-gray-100 rounded-lg">
+              <EyeOff className="w-5 h-5 text-gray-500" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-gray-900">{stats.inactive}</p>
+              <p className="text-sm text-gray-500">Đã ẩn</p>
+            </div>
+          </div>
+        </div>
       </div>
 
+      {/* Banners Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {banners.length === 0 ? (
+          <div className="col-span-full bg-white rounded-xl border border-gray-100 shadow-sm p-12 text-center">
+            <Layout className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+            <p className="text-gray-500 font-medium">Chưa có banner nào</p>
+            <p className="text-gray-400 text-sm mt-1">Bắt đầu bằng cách thêm banner đầu tiên</p>
+          </div>
+        ) : (
+          banners.map((banner) => {
+            const positionConfig = getPositionConfig(banner.position);
+            return (
+              <div
+                key={banner._id}
+                className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow group"
+              >
+                {/* Banner Image */}
+                <div className="aspect-[16/7] bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center relative">
+                  <div className="text-center">
+                    <ImageIcon className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+                    <p className="text-sm text-gray-400">Banner Preview</p>
+                  </div>
+                  {/* Status Badge */}
+                  <div className="absolute top-3 right-3">
+                    <button
+                      type="button"
+                      onClick={() => toggleActive(banner._id)}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                        banner.isActive ? "bg-green-500" : "bg-gray-300"
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow ${
+                          banner.isActive ? "translate-x-6" : "translate-x-1"
+                        }`}
+                      />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Banner Content */}
+                <div className="p-5">
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-900 truncate">{banner.title}</h3>
+                      {banner.description && (
+                        <p className="text-sm text-gray-500 mt-0.5 line-clamp-1">{banner.description}</p>
+                      )}
+                    </div>
+                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${positionConfig.bg} ${positionConfig.text} border ${positionConfig.border} whitespace-nowrap`}>
+                      {positionConfig.label}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                    <div className="flex items-center gap-1.5">
+                      <MapPin size={14} className="text-gray-400" />
+                      <span>Thứ tự: {banner.order}</span>
+                    </div>
+                    {banner.linkUrl && (
+                      <a
+                        href={banner.linkUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 text-blue-600 hover:text-blue-700"
+                      >
+                        <Link2 size={14} />
+                        <span className="truncate max-w-[150px]">{banner.linkText || "Xem link"}</span>
+                        <ExternalLink size={12} />
+                      </a>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
+                    <button
+                      type="button"
+                      onClick={() => handleOpenModal(banner)}
+                      className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                    >
+                      <Edit size={14} />
+                      Chỉnh sửa
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(banner._id)}
+                      className="inline-flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900">
-                {editingBanner ? "Chỉnh sửa banner" : "Thêm banner mới"}
-              </h2>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div
+            className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">
+                  {editingBanner ? "Chỉnh sửa banner" : "Thêm banner mới"}
+                </h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  {editingBanner ? "Cập nhật thông tin banner" : "Tạo banner quảng cáo mới"}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleCloseModal}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X size={20} className="text-gray-500" />
+              </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleSubmit} className="p-6 space-y-5">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Tiêu đề <span className="text-red-500">*</span>
@@ -240,7 +314,8 @@ export default function BannersPage() {
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm"
+                  placeholder="Nhập tiêu đề banner"
                   required
                 />
               </div>
@@ -250,8 +325,9 @@ export default function BannersPage() {
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm resize-none"
                   rows={2}
+                  placeholder="Nhập mô tả ngắn"
                 />
               </div>
 
@@ -263,85 +339,99 @@ export default function BannersPage() {
                   type="text"
                   value={formData.image}
                   onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm"
                   placeholder="/banners/example.jpg"
                   required
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">URL liên kết</label>
                   <input
                     type="text"
                     value={formData.linkUrl}
                     onChange={(e) => setFormData({ ...formData, linkUrl: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm"
+                    placeholder="/products"
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Text nút</label>
                   <input
                     type="text"
                     value={formData.linkText}
                     onChange={(e) => setFormData({ ...formData, linkText: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm"
+                    placeholder="Xem ngay"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Vị trí</label>
-                  <select
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Vị trí hiển thị</label>
+                  <CustomSelect
                     value={formData.position}
-                    onChange={(e) => setFormData({ ...formData, position: e.target.value as Banner["position"] })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                  >
-                    <option value="home_hero">Trang chủ - Hero</option>
-                    <option value="home_middle">Trang chủ - Giữa</option>
-                    <option value="category_top">Danh mục - Đầu trang</option>
-                    <option value="product_sidebar">Sản phẩm - Sidebar</option>
-                  </select>
+                    onChange={(value) => setFormData({ ...formData, position: value as Banner["position"] })}
+                    variant="blue"
+                    options={[
+                      { value: "home_hero", label: "Trang chủ - Hero" },
+                      { value: "home_middle", label: "Trang chủ - Giữa" },
+                      { value: "category_top", label: "Danh mục - Đầu trang" },
+                      { value: "product_sidebar", label: "Sản phẩm - Sidebar" },
+                    ]}
+                  />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Thứ tự</label>
                   <input
                     type="number"
                     value={formData.order}
                     onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none text-sm"
                     min="0"
+                    placeholder="0"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="isActive"
-                  checked={formData.isActive}
-                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                />
-                <label htmlFor="isActive" className="text-sm font-medium text-gray-700">
-                  Kích hoạt banner
-                </label>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, isActive: !formData.isActive })}
+                  className={`w-full px-4 py-2.5 border rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+                    formData.isActive
+                      ? "border-green-200 bg-green-50 text-green-700"
+                      : "border-gray-200 bg-gray-50 text-gray-600"
+                  }`}
+                >
+                  {formData.isActive ? (
+                    <>
+                      <ToggleRight size={18} />
+                      Đang hiển thị
+                    </>
+                  ) : (
+                    <>
+                      <ToggleLeft size={18} />
+                      Đã ẩn
+                    </>
+                  )}
+                </button>
               </div>
 
-              <div className="flex items-center gap-4 pt-4">
+              <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                  className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                 >
                   {editingBanner ? "Cập nhật" : "Thêm mới"}
                 </button>
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+                  className="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
                 >
                   Hủy
                 </button>

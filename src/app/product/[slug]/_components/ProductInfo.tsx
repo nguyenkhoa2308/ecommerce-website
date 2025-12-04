@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ShoppingCart, Calculator } from "lucide-react";
-import { useCartStore } from "@/store/cartStore";
+import { useCartStore } from "@/stores/cartStore";
 import toast from "react-hot-toast";
 
 interface ProductInfoProps {

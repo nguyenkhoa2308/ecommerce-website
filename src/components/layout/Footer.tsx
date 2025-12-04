@@ -330,7 +330,7 @@ export default function Footer() {
       </div>
 
       {/* Copyright Bar */}
-      <div className="bg-black bg-opacity-50 py-6">
+      <div className="bg-black/50 py-6">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400">
             <p className="text-center md:text-left">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCartStore } from "@/store/cartStore";
+import { useCartStore } from "@/stores/cartStore";
 import { useEffect, useState } from "react";
 
 export default function HydrationProvider({
